@@ -2,7 +2,14 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Check, Calendar, Clock, User, Scissors } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SERVICES, BARBERS, generateTimeSlots, type Service, type Barber, type TimeSlot } from "@/data/barbershop";
+import { generateTimeSlots } from "@/data/barbershop";
+import type { Service, Barber } from "@/types/database";
+import { useBarbershopData } from "@/hooks/useBarbershopData";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
 import barber1 from "@/assets/barber-1.jpg";
 import barber2 from "@/assets/barber-2.jpg";
 import barber3 from "@/assets/barber-3.jpg";
@@ -33,6 +40,11 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
   const [selectedBarber, setSelectedBarber] = useState<Barber | null>(initialBarber || null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { services, barbers, isLoading } = useBarbershopData();
+  const { session, user } = useAuth();
+  const navigate = useNavigate();
 
   const stepIndex = STEPS.indexOf(step);
 
@@ -59,9 +71,60 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
   const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
   const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
-  const handleConfirm = () => {
-    // Would integrate with backend
-    onClose();
+  const handleConfirm = async () => {
+    if (!session || !user) {
+      toast.error("Você precisa estar logado para agendar.");
+      onClose();
+      navigate("/auth");
+      return;
+    }
+
+    if (!selectedService || !selectedBarber || !selectedDate || !selectedTime) {
+      toast.error("Preencha todos os dados do agendamento.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Combina a data selecionada com o horário (HH:MM)
+      const [hours, minutes] = selectedTime.split(":");
+      const startDateTime = new Date(selectedDate);
+      startDateTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+      
+      const endDateTime = new Date(startDateTime);
+      endDateTime.setMinutes(startDateTime.getMinutes() + selectedService.duration_minutes);
+
+      const { error } = await supabase.from("appointments").insert({
+        client_id: user.id,
+        barber_id: selectedBarber.id,
+        service_id: selectedService.id,
+        start_time: startDateTime.toISOString(),
+        end_time: endDateTime.toISOString(),
+        status: "PENDING",
+        total_price: selectedService.price,
+      });
+
+      if (error) throw error;
+      
+      toast.success("Agendamento confirmado com sucesso!");
+      
+      // Reseta os estados internos para o proximo abrir
+      setTimeout(() => {
+        setStep("service");
+        setSelectedService(null);
+        setSelectedBarber(null);
+        setSelectedDate(null);
+        setSelectedTime(null);
+        onClose();
+      }, 1000);
+      
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro ao gravar o agendamento.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -125,7 +188,9 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-4"
                 >
-                  {SERVICES.map((service) => (
+                  {isLoading ? (
+                    <div className="text-center py-4 opacity-50 font-body text-sm">Carregando catálogo de serviços...</div>
+                  ) : services.map((service) => (
                     <button
                       key={service.id}
                       onClick={() => { setSelectedService(service); next(); }}
@@ -140,11 +205,11 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
                       <div className="relative z-10">
                         <p className="font-body font-semibold text-lg text-foreground group-hover:text-gold-light transition-colors">{service.name}</p>
                         <p className="font-body text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {service.duration} min
+                          <Clock className="w-3 h-3" /> {service.duration_minutes} min
                         </p>
                       </div>
                       <span className="relative z-10 font-display text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 group-hover:from-gold-light group-hover:to-gold-dark transition-all duration-300">
-                        R${service.price}
+                        R${Number(service.price).toFixed(2).replace('.', ',')}
                       </span>
                     </button>
                   ))}
@@ -159,14 +224,16 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-3"
                 >
-                  {BARBERS.map((barber) => (
+                  {isLoading ? (
+                    <div className="text-center py-4 opacity-50 font-body text-sm">Carregando profissionais...</div>
+                  ) : barbers.map((barber) => (
                     <button
                       key={barber.id}
                       onClick={() => { setSelectedBarber(barber); next(); }}
                       className="w-full glass-subtle rounded-xl p-4 text-left transition-all duration-200 hover:border-primary/30 flex items-center gap-4"
                     >
                       <img
-                        src={barberImages[barber.id]}
+                        src={barber.avatar_url || barberImages[barber.id] || barberImages["1"]}
                         alt={barber.name}
                         className="w-14 h-14 rounded-full object-cover"
                       />
@@ -298,9 +365,9 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
                     </span>
                   </div>
 
-                  <Button variant="gold" className="w-full py-6 text-base" onClick={handleConfirm}>
+                  <Button disabled={isSubmitting} variant="gold" className="w-full py-6 text-base" onClick={handleConfirm}>
                     <Check className="w-5 h-5 mr-2" />
-                    Confirmar Agendamento
+                    {isSubmitting ? "Processando Agendamento..." : "Confirmar Agendamento"}
                   </Button>
                 </motion.div>
               )}
