@@ -23,53 +23,77 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 py-20">
+      <div className="relative z-10 container mx-auto px-6 py-20 flex flex-col justify-center items-center md:items-start h-full">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-2xl"
+          transition={{ duration: 1, cubicBezier: [0.16, 1, 0.3, 1] }}
+          className="max-w-3xl text-center md:text-left"
         >
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex items-center gap-3 mb-6"
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="flex items-center justify-center md:justify-start gap-4 mb-8"
           >
-            <div className="h-px w-12 bg-gradient-gold" />
-            <span className="text-primary font-body text-sm tracking-[0.3em] uppercase">
-              Barbearia Premium
+            <div className="h-[2px] w-16 bg-gradient-to-r from-gold to-gold-light rounded-full" />
+            <span className="text-gold-light font-body text-xs md:text-sm tracking-[0.4em] uppercase font-semibold">
+              A Experiência Premium
             </span>
           </motion.div>
 
-          <h1 className="font-display text-6xl md:text-8xl font-bold leading-[0.9] mb-6">
-            <span className="text-foreground">A Arte do</span>
-            <br />
-            <span className="text-gradient-gold">Corte Perfeito</span>
+          <h1 className="font-display text-7xl md:text-8xl lg:text-[8rem] font-bold leading-[0.85] mb-8 drop-shadow-2xl">
+            <motion.span 
+              initial={{ opacity: 0, filter: "blur(10px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ delay: 0.5, duration: 1 }}
+              className="text-foreground block"
+            >
+              A Arte do
+            </motion.span>
+            <motion.span 
+              initial={{ opacity: 0, filter: "blur(10px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ delay: 0.7, duration: 1 }}
+              className="text-transparent bg-clip-text bg-gradient-to-r from-gold-light via-gold to-gold-dark block mt-2"
+            >
+              Corte Perfeito
+            </motion.span>
           </h1>
 
-          <p className="font-body text-muted-foreground text-lg md:text-xl max-w-lg mb-10 font-light leading-relaxed">
-            Onde tradição encontra sofisticação. Cada detalhe pensado para uma experiência única.
-          </p>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 1 }}
+            className="font-body text-muted-foreground/90 text-lg md:text-2xl max-w-xl mb-12 font-light leading-relaxed mx-auto md:mx-0"
+          >
+            Onde a tradição da barbearia clássica encontra o luxo contemporâneo. Cada detalhe da nossa casa foi pensado para o seu conforto.
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.8 }}
+            className="flex flex-col sm:flex-row gap-5 justify-center md:justify-start"
+          >
             <Button
-              variant="gold"
-              size="lg"
+              className="relative group overflow-hidden bg-gold hover:bg-gold-light text-charcoal font-bold text-lg px-8 py-7 rounded-none border-none shadow-[0_0_40px_rgba(212,175,55,0.3)] transition-all duration-300"
               onClick={onBookNow}
-              className="text-base px-8 py-6"
             >
-              <Scissors className="w-5 h-5 mr-2" />
-              Agendar Agora
+              <div className="absolute inset-0 w-full h-full bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+              <span className="relative flex items-center gap-3">
+                <Scissors className="w-6 h-6" />
+                Agendar Agora
+              </span>
             </Button>
+            
             <Button
-              variant="gold-outline"
-              size="lg"
-              className="text-base px-8 py-6"
+              variant="outline"
+              className="group text-lg px-8 py-7 rounded-none border-border/50 bg-background/20 backdrop-blur-md hover:bg-background/40 hover:border-gold/50 transition-all duration-300"
             >
-              Conheça a Casa
+              <span className="group-hover:text-gold transition-colors duration-300">Conheça a Casa</span>
             </Button>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
 

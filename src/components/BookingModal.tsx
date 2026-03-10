@@ -115,7 +115,7 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
           </div>
 
           {/* Content */}
-          <div className="p-5 overflow-y-auto max-h-[60vh]">
+          <div className="p-5 overflow-y-auto max-h-[60vh] custom-scrollbar">
             <AnimatePresence mode="wait">
               {step === "service" && (
                 <motion.div
@@ -123,21 +123,29 @@ const BookingModal = ({ isOpen, onClose, initialService, initialBarber }: Bookin
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="space-y-3"
+                  className="space-y-4"
                 >
                   {SERVICES.map((service) => (
                     <button
                       key={service.id}
                       onClick={() => { setSelectedService(service); next(); }}
-                      className={`w-full glass-subtle rounded-xl p-4 text-left transition-all duration-200 hover:border-primary/30 flex items-center justify-between ${
-                        selectedService?.id === service.id ? "border-primary/50" : ""
-                      }`}
+                      className={`group relative w-full overflow-hidden rounded-2xl p-5 text-left transition-all duration-300 flex items-center justify-between
+                        ${selectedService?.id === service.id 
+                          ? "bg-gold/10 border border-gold shadow-[0_0_20px_rgba(212,175,55,0.15)]" 
+                          : "bg-background/40 backdrop-blur-md border border-white/5 hover:border-gold/30 hover:bg-background/60"
+                        }`}
                     >
-                      <div>
-                        <p className="font-body font-semibold text-foreground">{service.name}</p>
-                        <p className="font-body text-xs text-muted-foreground mt-1">{service.duration} min</p>
+                      <div className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/5 to-gold/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                      
+                      <div className="relative z-10">
+                        <p className="font-body font-semibold text-lg text-foreground group-hover:text-gold-light transition-colors">{service.name}</p>
+                        <p className="font-body text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {service.duration} min
+                        </p>
                       </div>
-                      <span className="font-display text-xl font-bold text-primary">R${service.price}</span>
+                      <span className="relative z-10 font-display text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 group-hover:from-gold-light group-hover:to-gold-dark transition-all duration-300">
+                        R${service.price}
+                      </span>
                     </button>
                   ))}
                 </motion.div>

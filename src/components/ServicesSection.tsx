@@ -25,44 +25,53 @@ const ServicesSection = ({ onSelectService }: ServicesSectionProps) => {
           <div className="line-gold w-24 mx-auto mt-6" />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {SERVICES.map((service, i) => (
-            <motion.button
+            <motion.div
               key={service.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onSelectService(service)}
-              className="glass rounded-xl p-6 text-left group cursor-pointer transition-all duration-300 hover:border-primary/30"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.1, duration: 0.6 }}
+              className="relative group h-full"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  {service.icon === "star" ? (
-                    <Star className="w-5 h-5 text-primary" />
-                  ) : (
-                    <Clock className="w-5 h-5 text-primary" />
-                  )}
+              <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+              <div className="relative h-full bg-background/40 backdrop-blur-xl border border-white/5 group-hover:border-gold/30 rounded-2xl p-8 cursor-pointer transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between overflow-hidden"
+                onClick={() => onSelectService(service)}
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-150" />
+                
+                <div>
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-background to-background border border-white/10 flex items-center justify-center shadow-lg shadow-black/50 group-hover:border-gold/50 transition-colors duration-500">
+                      {service.icon === "star" ? (
+                        <Star className="w-6 h-6 text-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" />
+                      ) : (
+                        <Clock className="w-6 h-6 text-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" />
+                      )}
+                    </div>
+                    <span className="text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 group-hover:from-gold-light group-hover:to-gold-dark transition-all duration-500">
+                      R${service.price}
+                    </span>
+                  </div>
+
+                  <h3 className="font-body font-semibold text-xl text-foreground mb-3 tracking-wide">
+                    {service.name}
+                  </h3>
+                  <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                    {service.description}
+                  </p>
                 </div>
-                <span className="text-2xl font-display font-bold text-primary">
-                  R${service.price}
-                </span>
-              </div>
 
-              <h3 className="font-body font-semibold text-lg text-foreground mb-2">
-                {service.name}
-              </h3>
-              <p className="font-body text-sm text-muted-foreground mb-4">
-                {service.description}
-              </p>
-
-              <div className="flex items-center gap-2 text-muted-foreground text-xs font-body">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{service.duration} min</span>
+                <div className="flex items-center gap-2 text-gold/70 text-xs font-body font-medium uppercase tracking-widest mt-8 pt-6 border-t border-white/5 group-hover:border-gold/20 transition-colors duration-500">
+                  <Clock className="w-4 h-4" />
+                  <span>{service.duration} min</span>
+                  <div className="ml-auto opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 text-gold">
+                    Agendar →
+                  </div>
+                </div>
               </div>
-            </motion.button>
+            </motion.div>
           ))}
         </div>
       </div>
