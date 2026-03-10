@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -47,7 +47,7 @@
     --glass-border: 0 0% 100% / 0.1;
     --glass-shadow: 0 8px 32px rgba(0,0,0,0.4);
 
-    --font-display: 'Cormorant Garamond', serif;
+    --font-display: 'Inter', sans-serif;
     --font-body: 'Montserrat', sans-serif;
 
     --sidebar-background: 0 0% 8%;

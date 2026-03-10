@@ -27,7 +27,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, cubicBezier: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-3xl text-center md:text-left"
         >
           <motion.div
@@ -42,7 +42,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
             </span>
           </motion.div>
 
-          <h1 className="font-display text-7xl md:text-8xl lg:text-[8rem] font-bold leading-[0.85] mb-8 drop-shadow-2xl">
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6 drop-shadow-xl">
             <motion.span 
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}

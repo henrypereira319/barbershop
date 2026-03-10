@@ -1,0 +1,264 @@
+/* Local overrides */
+
+.custom-caption-copy,
+.custom-caption-copy a {
+	font-size: 12px;
+	line-height: 1.3333733333;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+	font-family:
+		SF Pro Text,
+		SF Pro Icons,
+		Helvetica Neue,
+		Helvetica,
+		Arial,
+		sans-serif;
+	color: #6e6e73;
+	padding-top: 1.2em;
+}
+
+@media only screen and (max-width: 734px) {
+	.custom-caption-copy {
+		font-size: 12px;
+		line-height: 1.3333733333;
+		font-weight: 400;
+		letter-spacing: -0.01em;
+	}
+}
+.custom-caption-copy {
+	display: inline-block;
+}
+
+/* Hero */
+
+.section-welcome .marquee-detail {
+	padding-inline-start: 10px;
+}
+
+@media only screen and (max-width: 375px) {
+	.section-welcome .marquee-header .typography-marquee-headline-base {
+		font-size: 30px;
+	}
+	.section-welcome .viewport-content {
+		width: 100%;
+	}
+	.section-welcome .marquee-detail {
+		padding-inline-start: 0px;
+		width: 90%;
+		margin: auto;
+	}
+}
+
+@media only screen and (min-width: 735px) {
+	.marquee-pricing.custom {
+		display: none;
+	}
+}
+
+@media only screen and (min-width: 1195px) and (max-width: 1536px) {
+	.section-welcome .header-headline {
+		max-width: 830px;
+	}
+}
+
+@media only screen and (min-width: 1537px) {
+	.section-welcome .header-headline {
+		max-width: 1090px;
+	}
+}
+
+@media only screen and (min-width: 735px) and (max-width: 745px) {
+	.section-welcome
+		.marquee
+		.viewport-content
+		.typography-marquee-headline-base {
+		font-size: 55px;
+	}
+}
+
+@media only screen and (min-width: 1069px) {
+	.section-welcome
+		.marquee
+		.viewport-content
+		.typography-marquee-headline-base {
+		font-size: 55px;
+	}
+}
+
+/* section highlights */
+@media only screen and (max-width: 374px) {
+	[data-media-card-gallery]
+		.media-gallery
+		#highlights-gallery-item-1
+		.caption-container.large-pin-top-center
+		.caption {
+		margin-left: 26px;
+		margin-right: 26px;
+	}
+}
+@media only screen and (max-width: 374px) {
+	[data-media-card-gallery]
+		.media-gallery
+		#highlights-gallery-item-2
+		.caption-container.large-pin-center-left
+		.caption {
+		margin-left: 12px;
+		margin-right: 12px;
+	}
+}
+@media only screen and (max-width: 374px) {
+	[data-media-card-gallery]
+		.media-gallery
+		#highlights-gallery-item-5
+		.caption-container.large-pin-center-left
+		.caption {
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+}
+
+@media only screen and (max-width: 374px) {
+	[data-media-card-gallery]
+		.media-gallery
+		#highlights-gallery-item-4
+		.caption-container
+		.caption {
+		margin-left: 17px;
+		margin-right: 17px;
+	}
+}
+
+/* Section fitness */
+
+.section-fitness .section-header-intro {
+	max-width: 840px;
+}
+
+/* Battery callout */
+
+.section-battery .stats .stat-item .call-out {
+	margin-top: 40px;
+}
+
+/* Hearing protection */
+
+@media only screen and (min-width: 735px) {
+	.static-fallback-only .card-overlay.hearing-protection-text {
+		width: 305px;
+	}
+}
+
+@media screen and (min-width: 1069px) and (max-width: 1194px) {
+	.section-welcome .marquee {
+		padding-bottom: 20px;
+	}
+}
+
+@media (max-width: 330px) {
+	#highlights-gallery-item-2
+		> div
+		> div.caption-container.large-pin-center-left.medium-pin-bottom-center.small-pin-top-center
+		> p {
+		margin-top: 20px;
+	}
+}
+
+#highlights-gallery-item-2
+	> div
+	> div.caption-container.large-pin-center-left.medium-pin-bottom-center.small-pin-top-center
+	> p {
+	margin-top: 20;
+}
+
+@media only screen and (min-width: 1069px) {
+	#hearing-health-gallery.scroll-gallery .card-set.card-set-full-bleed {
+		padding-right: 93px;
+	}
+}
+
+/* Audio Performance enhanced custom  */
+@media only screen and (max-height: 670px) and (max-width: 414px) {
+	html.enhanced
+		.section-audio-performance
+		.scroll-item-acoustics.custom_scroll-item
+		.scroll-copy {
+		top: -25px;
+	}
+}
+
+@media only screen and (max-height: 570px) and (max-width: 414px) {
+	html.enhanced
+		.section-audio-performance
+		.scroll-item-acoustics.custom_scroll-item
+		.scroll-copy {
+		top: -85px;
+		background-image: linear-gradient(
+			to bottom,
+			rgba(245, 245, 247, 0) 0%,
+			rgba(245, 245, 247, 0.8) 7px
+		);
+	}
+	html.enhanced .section-audio-performance .scroll-container {
+		--p-height: 540px;
+	}
+
+	html.no-mq-medium-short.enhanced .section-personalized-listening {
+		padding-top: 35px;
+	}
+}
+
+/* Section gallery */
+
+#values-gallery #gallery-item-privacy-2 .icon-card-headline {
+	max-width: 69%;
+}
+
+/* why apple */
+
+.custom_card-link,
+.custom_card-link:hover {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* Hero custom pricing */
+
+.typography-marquee-detail.custom_pricing .marquee-pricing.custom_small_vp {
+	display: none;
+}
+.custom_medlarge_vp {
+	display: inline;
+}
+.ric-dynamic-pricing.custom_medlarge_vp {
+	display: inline;
+}
+@media only screen and (max-width: 734px) {
+	.typography-marquee-detail.custom_pricing .marquee-pricing.custom_small_vp {
+		display: inline;
+		text-align: left;
+	}
+	.custom_medlarge_vp {
+		display: none;
+	}
+	.ric-dynamic-pricing.custom_medlarge_vp {
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 734px) {
+	.section-welcome .custom_marquee.marquee-detail::before {
+		background-color: unset;
+	}
+	.section-welcome .custom_marquee .detail-inner-group {
+		justify-content: center;
+		padding-bottom: 10px;
+	}
+}
+
+/* compare */
+
+@media only screen and (min-width: 1069px) {
+	.product-tile .tout .tout-copy.custom {
+		max-width: 15rem;
+	}
+}
