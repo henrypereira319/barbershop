@@ -8,9 +8,13 @@ import * as THREE from "three";
 import { OrbitControls, Environment, ContactShadows, Float } from "@react-three/drei";
 import JSZip from "jszip";
 
-// 3MFLoader needs JSZip to be available globally to decompress the 3MF package
+// Three.js 3MFLoader fallback requires JSZip on the global window object if fflate fails
 if (typeof window !== "undefined") {
-  (window as any).JSZip = JSZip;
+  // @ts-ignore
+  window.JSZip = JSZip;
+  // Some versions of three/jszip expect it on the global scope directly
+  // @ts-ignore
+  globalThis.JSZip = JSZip;
 }
 
 // Model Component
