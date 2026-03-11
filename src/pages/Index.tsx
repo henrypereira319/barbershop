@@ -7,6 +7,7 @@ import LoyaltySection from "@/components/LoyaltySection";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
 import { type Service, type Barber } from "@/data/barbershop";
+import { SplineSceneBasic } from "@/components/ui/demo";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,6 +33,11 @@ const Index = () => {
       >
         <Navbar onBookNow={() => openBooking()} />
         <HeroSection onBookNow={() => openBooking()} />
+        
+        {/* Interactive 3D Section */}
+        <div id="interactive-3d">
+          <SplineSceneBasic />
+        </div>
         
         <div id="servicos" className="scroll-mt-20">
           <ServicesSection onSelectService={(s) => openBooking(s)} />
