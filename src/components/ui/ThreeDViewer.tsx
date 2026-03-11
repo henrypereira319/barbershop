@@ -6,30 +6,57 @@ import { MotionValue } from "framer-motion";
 import { ThreeMFLoader } from "three/examples/jsm/loaders/3MFLoader";
 import * as THREE from "three";
 import { OrbitControls, Environment, ContactShadows, Float } from "@react-three/drei";
+import JSZip from "jszip";
+
+// 3MFLoader needs JSZip to be available globally to decompress the 3MF package
+if (typeof window !== "undefined") {
+  (window as any).JSZip = JSZip;
+}
 
 // Model Component
 function Model3MF({ url, rotationProgress }: { url: string; rotationProgress: MotionValue<number> }) {
   const [model, setModel] = useState<THREE.Group | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     const loader = new ThreeMFLoader();
-    loader.load(url, (object) => {
-      const box = new THREE.Box3().setFromObject(object);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 5 / maxDim;
-      
-      object.position.x = -center.x * scale;
-      object.position.y = -center.y * scale;
-      object.position.z = -center.z * scale;
-      object.scale.setScalar(scale);
-      
-      object.rotation.x = -Math.PI / 2;
+    
+    loader.load(
+      url, 
+      (object) => {
+        if (!isMounted) return;
+        try {
+          console.log("3MFLoader success! Object:", object);
+          const box = new THREE.Box3().setFromObject(object);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 5 / maxDim;
+          
+          object.position.x = -center.x * scale;
+          object.position.y = -center.y * scale;
+          object.position.z = -center.z * scale;
+          object.scale.setScalar(scale);
+          
+          object.rotation.x = -Math.PI / 2;
 
-      setModel(object);
-    });
+          setModel(object);
+        } catch (err) {
+          console.error("Error processing loaded 3MF object:", err);
+          debugger;
+        }
+      },
+      (progress) => {
+        console.log("3MFLoader progress:", (progress.loaded / progress.total) * 100, "%");
+      },
+      (error) => {
+        console.error("3MFLoader failed to load file:", error);
+        debugger;
+      }
+    );
+
+    return () => { isMounted = false; };
   }, [url]);
 
   const groupRef = useRef<THREE.Group>(null);
