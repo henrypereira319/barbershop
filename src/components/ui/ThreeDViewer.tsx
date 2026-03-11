@@ -1,20 +1,10 @@
 'use client'
 
 import React, { useRef, useMemo, Suspense } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { MotionValue } from "framer-motion";
-import { ThreeMFLoader } from "three/examples/jsm/loaders/3MFLoader";
 import * as THREE from "three";
-import { Environment, ContactShadows, Float, Html, useProgress } from "@react-three/drei";
-import JSZip from "jszip";
-
-// Three.js 3MFLoader fallback requires JSZip on the global window object if fflate fails
-if (typeof window !== "undefined") {
-  // @ts-ignore
-  window.JSZip = JSZip;
-  // @ts-ignore
-  globalThis.JSZip = JSZip;
-}
+import { Environment, ContactShadows, Float, Html, useProgress, useGLTF } from "@react-three/drei";
 
 function LoaderFallback() {
   const { progress } = useProgress();
@@ -28,12 +18,12 @@ function LoaderFallback() {
 }
 
 // Model Component
-function Model3MF({ url, rotationProgress }: { url: string; rotationProgress: MotionValue<number> }) {
-  const originalModel = useLoader(ThreeMFLoader, url);
+function ModelGLTF({ url, rotationProgress }: { url: string; rotationProgress: MotionValue<number> }) {
+  const { scene } = useGLTF(url);
   
   // Clone the model so we can mutate its transforms safely without affecting the cached version
   const model = useMemo(() => {
-    const cloned = originalModel.clone();
+    const cloned = scene.clone();
     
     // Auto-center and scale
     const box = new THREE.Box3().setFromObject(cloned);
@@ -48,10 +38,8 @@ function Model3MF({ url, rotationProgress }: { url: string; rotationProgress: Mo
     cloned.position.z = -center.z * scale;
     cloned.scale.setScalar(scale);
     
-    cloned.rotation.x = -Math.PI / 2;
-    
     return cloned;
-  }, [originalModel]);
+  }, [scene]);
 
   const groupRef = useRef<THREE.Group>(null);
 
@@ -71,7 +59,7 @@ function Model3MF({ url, rotationProgress }: { url: string; rotationProgress: Mo
 // Viewer Wrapper Component
 export function ThreeDViewer({ 
   className,
-  url = "/reduced_color.3mf",
+  url = "/result.glb",
   rotationProgress
 }: { 
   className?: string; 
@@ -88,7 +76,7 @@ export function ThreeDViewer({
         
         <Suspense fallback={<LoaderFallback />}>
           <Float speed={2} rotationIntensity={0.1} floatIntensity={0.5}>
-            <Model3MF 
+            <ModelGLTF 
                url={url} 
                rotationProgress={rotationProgress}
             />
@@ -102,3 +90,5 @@ export function ThreeDViewer({
   );
 }
 
+// Preload the model
+useGLTF.preload("/result.glb");
