@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Inter", "sans-serif"],
+        display: ["Playfair Display", "serif"],
         body: ["Montserrat", "sans-serif"],
       },
       colors: {

@@ -69,9 +69,9 @@ export function ThreeDViewer({
   return (
     <div className={className}>
       <Canvas shadows camera={{ position: [0, 2, 7], fov: 45 }}>
-        <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-        <spotLight position={[-10, 10, -10]} angle={0.15} penumbra={1} intensity={0.5} />
+        <ambientLight intensity={0.4} color="#ffebd6" />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.2} color="#ffd4a3" castShadow />
+        <spotLight position={[-10, 10, -10]} angle={0.15} penumbra={1} intensity={0.6} color="#ffebd6" />
         <Environment preset="city" />
         
         <Suspense fallback={<LoaderFallback />}>
