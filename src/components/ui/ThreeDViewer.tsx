@@ -1,67 +1,57 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import React, { useRef, useMemo, Suspense } from "react";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { MotionValue } from "framer-motion";
 import { ThreeMFLoader } from "three/examples/jsm/loaders/3MFLoader";
 import * as THREE from "three";
-import { OrbitControls, Environment, ContactShadows, Float } from "@react-three/drei";
+import { Environment, ContactShadows, Float, Html, useProgress } from "@react-three/drei";
 import JSZip from "jszip";
 
 // Three.js 3MFLoader fallback requires JSZip on the global window object if fflate fails
 if (typeof window !== "undefined") {
   // @ts-ignore
   window.JSZip = JSZip;
-  // Some versions of three/jszip expect it on the global scope directly
   // @ts-ignore
   globalThis.JSZip = JSZip;
 }
 
+function LoaderFallback() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div className="text-white text-lg font-medium whitespace-nowrap">
+        {progress.toFixed(0)}% loaded
+      </div>
+    </Html>
+  );
+}
+
 // Model Component
 function Model3MF({ url, rotationProgress }: { url: string; rotationProgress: MotionValue<number> }) {
-  const [model, setModel] = useState<THREE.Group | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    const loader = new ThreeMFLoader();
+  const originalModel = useLoader(ThreeMFLoader, url);
+  
+  // Clone the model so we can mutate its transforms safely without affecting the cached version
+  const model = useMemo(() => {
+    const cloned = originalModel.clone();
     
-    loader.load(
-      url, 
-      (object) => {
-        if (!isMounted) return;
-        try {
-          console.log("3MFLoader success! Object:", object);
-          const box = new THREE.Box3().setFromObject(object);
-          const center = box.getCenter(new THREE.Vector3());
-          const size = box.getSize(new THREE.Vector3());
-          
-          const maxDim = Math.max(size.x, size.y, size.z);
-          const scale = 5 / maxDim;
-          
-          object.position.x = -center.x * scale;
-          object.position.y = -center.y * scale;
-          object.position.z = -center.z * scale;
-          object.scale.setScalar(scale);
-          
-          object.rotation.x = -Math.PI / 2;
-
-          setModel(object);
-        } catch (err) {
-          console.error("Error processing loaded 3MF object:", err);
-          debugger;
-        }
-      },
-      (progress) => {
-        console.log("3MFLoader progress:", (progress.loaded / progress.total) * 100, "%");
-      },
-      (error) => {
-        console.error("3MFLoader failed to load file:", error);
-        debugger;
-      }
-    );
-
-    return () => { isMounted = false; };
-  }, [url]);
+    // Auto-center and scale
+    const box = new THREE.Box3().setFromObject(cloned);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 5 / maxDim;
+    
+    cloned.position.x = -center.x * scale;
+    cloned.position.y = -center.y * scale;
+    cloned.position.z = -center.z * scale;
+    cloned.scale.setScalar(scale);
+    
+    cloned.rotation.x = -Math.PI / 2;
+    
+    return cloned;
+  }, [originalModel]);
 
   const groupRef = useRef<THREE.Group>(null);
 
@@ -70,8 +60,6 @@ function Model3MF({ url, rotationProgress }: { url: string; rotationProgress: Mo
       groupRef.current.rotation.y = (rotationProgress.get() * Math.PI * 2) - Math.PI / 4;
     }
   });
-
-  if (!model) return null;
 
   return (
     <group ref={groupRef}>
@@ -98,12 +86,14 @@ export function ThreeDViewer({
         <spotLight position={[-10, 10, -10]} angle={0.15} penumbra={1} intensity={0.5} />
         <Environment preset="city" />
         
-        <Float speed={2} rotationIntensity={0.1} floatIntensity={0.5}>
-          <Model3MF 
-             url={url} 
-             rotationProgress={rotationProgress}
-          />
-        </Float>
+        <Suspense fallback={<LoaderFallback />}>
+          <Float speed={2} rotationIntensity={0.1} floatIntensity={0.5}>
+            <Model3MF 
+               url={url} 
+               rotationProgress={rotationProgress}
+            />
+          </Float>
+        </Suspense>
         
         {/* Soft shadow plane underneath */}
         <ContactShadows position={[0, -2.5, 0]} opacity={0.5} scale={10} blur={2} far={4} />
@@ -111,3 +101,4 @@ export function ThreeDViewer({
     </div>
   );
 }
+
